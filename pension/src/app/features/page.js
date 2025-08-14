@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Features() {
   return (
     <div className="min-h-screen bg-white">
@@ -14,11 +16,11 @@ export default function Features() {
               <span className="text-xl font-bold text-gray-900">Pension Planner Pro</span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</a>
-              <a href="/features" className="text-green-600 font-semibold">Features</a>
-              <a href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</a>
-              <a href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</a>
+              <Link href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</Link>
+              <Link href="/features" className="text-green-600 font-semibold">Features</Link>
+              <Link href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</Link>
+              <Link href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">

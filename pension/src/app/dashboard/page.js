@@ -3,6 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -44,11 +45,11 @@ export default function Dashboard() {
               <span className="text-xl font-bold text-gray-900">Pension Planner Pro</span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</a>
-              <a href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</a>
-              <a href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</a>
-              <a href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</a>
+              <Link href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</Link>
+              <Link href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</Link>
+              <Link href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</Link>
+              <Link href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <span className="text-gray-700">Welcome, {user.displayName || user.email}</span>

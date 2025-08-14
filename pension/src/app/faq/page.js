@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function FAQ() {
   return (
     <div className="min-h-screen bg-white">
@@ -14,11 +16,11 @@ export default function FAQ() {
               <span className="text-xl font-bold text-gray-900">Pension Planner Pro</span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</a>
-              <a href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</a>
-              <a href="/faq" className="text-green-600 font-semibold">FAQ</a>
-              <a href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</a>
+              <Link href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</Link>
+              <Link href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</Link>
+              <Link href="/faq" className="text-green-600 font-semibold">FAQ</Link>
+              <Link href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
@@ -160,14 +162,14 @@ export default function FAQ() {
           <div className="mt-16 text-center bg-green-50 p-8 rounded-xl">
             <h2 className="text-2xl font-bold text-green-800 mb-4">Still have questions?</h2>
             <p className="text-gray-600 mb-6">
-              Can't find the answer you're looking for? Our support team is here to help.
+              Can&apos;t find the answer you&apos;re looking for? Our support team is here to help.
             </p>
-            <a 
+            <Link 
               href="/contact" 
               className="inline-block px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
             >
               Contact Support
-            </a>
+            </Link>
           </div>
         </div>
       </main>

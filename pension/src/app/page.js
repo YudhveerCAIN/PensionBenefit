@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/components/AuthModal";
+import Link from "next/link";
 
 export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -27,11 +28,11 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-green-600 font-semibold">Home</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</a>
-              <a href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</a>
-              <a href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</a>
-              <a href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</a>
+              <Link href="/" className="text-green-600 font-semibold">Home</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</Link>
+              <Link href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</Link>
+              <Link href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</Link>
+              <Link href="/contact" className="text-gray-700 hover:text-green-600 transition-colors">Contact</Link>
             </nav>
 
             {/* CTA Buttons */}

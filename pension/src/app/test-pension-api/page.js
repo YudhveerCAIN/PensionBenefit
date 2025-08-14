@@ -213,7 +213,7 @@ export default function TestPensionAPI() {
                            <p className="text-sm text-gray-600"><strong>Administering Agency:</strong> {scheme.administering_agency}</p>
                          </div>
                          <div>
-                           <p className="text-sm text-gray-600"><strong>Age Range:</strong> {scheme.eligibility_age_min}-{scheme.eligibility_age_max || 'No limit'}</p>
+                           <p className="text-sm text-gray-600"><strong>Age Range:</strong> {scheme.eligibility_age_min}-{scheme.eligibility_age_max || "No limit"}</p>
                            <p className="text-sm text-gray-600"><strong>Contribution:</strong> {scheme.contribution_employee_pct}</p>
                            <p className="text-sm text-gray-600"><strong>Pension Formula:</strong> {scheme.pension_formula.substring(0, 100)}...</p>
                          </div>
