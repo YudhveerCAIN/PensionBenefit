@@ -110,7 +110,7 @@ export default function FAQ() {
                 <p className="text-gray-600 leading-relaxed">
                   We provide step-by-step guidance throughout the entire claim process. If you encounter any issues or 
                   have questions, our support team is available 24/7 to help. We also offer document checklists and 
-                  progress tracking to ensure you don't miss any important steps.
+                  progress tracking to ensure you don&apos;t miss any important steps.
                 </p>
               </div>
             </div>

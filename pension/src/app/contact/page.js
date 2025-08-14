@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Contact() {
   return (
     <div className="min-h-screen bg-white">
@@ -14,11 +16,11 @@ export default function Contact() {
               <span className="text-xl font-bold text-gray-900">Pension Planner Pro</span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</a>
-              <a href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</a>
-              <a href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</a>
-              <a href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</a>
-              <a href="/contact" className="text-green-600 font-semibold">Contact</a>
+              <Link href="/" className="text-gray-700 hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 transition-colors">About</Link>
+              <Link href="/features" className="text-gray-700 hover:text-green-600 transition-colors">Features</Link>
+              <Link href="/faq" className="text-gray-700 hover:text-green-600 transition-colors">FAQ</Link>
+              <Link href="/contact" className="text-green-600 font-semibold">Contact</Link>
             </nav>
             <div className="flex items-center space-x-4">
               <button className="px-4 py-2 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
@@ -38,7 +40,7 @@ export default function Contact() {
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-green-800 mb-6">Get in Touch</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Have questions about our services or need help with your pension planning? We're here to help!
+              Have questions about our services or need help with your pension planning? We&apos;re here to help!
             </p>
           </div>
 
@@ -225,7 +227,7 @@ export default function Contact() {
               <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h3 className="text-lg font-semibold text-yellow-800 mb-2">Emergency Support</h3>
                 <p className="text-yellow-700 mb-3">
-                  For urgent pension-related issues outside business hours, please email us with "URGENT" in the subject line.
+                  For urgent pension-related issues outside business hours, please email us with &quot;URGENT&quot; in the subject line.
                 </p>
                 <a 
                   href="mailto:urgent@pensionplannerpro.com" 
