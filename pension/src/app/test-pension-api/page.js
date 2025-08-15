@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function TestPensionAPI() {
+  const COUNTRIES = ["India", "Japan", "USA", "UK"];
   const [formData, setFormData] = useState({
     age: '',
-    origin: 'India',
+    countries: ['India'],
     annualSalary: ''
   });
+  const [countriesOpen, setCountriesOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,6 +23,36 @@ export default function TestPensionAPI() {
     }));
   };
 
+  const handleCountriesChange = (e) => {
+    const options = Array.from(e.target.selectedOptions).map(opt => opt.value);
+    setFormData(prev => ({
+      ...prev,
+      countries: options
+    }));
+  };
+
+  const toggleCountry = (country) => {
+    setFormData(prev => {
+      const selected = new Set(prev.countries || []);
+      if (selected.has(country)) {
+        selected.delete(country);
+      } else {
+        selected.add(country);
+      }
+      return { ...prev, countries: Array.from(selected) };
+    });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setCountriesOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,13 +60,17 @@ export default function TestPensionAPI() {
     setResult(null);
 
     try {
-      const params = new URLSearchParams({
-        age: formData.age,
-        origin: formData.origin,
-        annualSalary: formData.annualSalary
-      });
+      if (!formData.countries || formData.countries.length === 0) {
+        throw new Error('Please select at least one country');
+      }
+      const params = new URLSearchParams();
+      if (formData.countries && formData.countries.length > 0) {
+        params.set('countries', formData.countries.join(','));
+      }
+      if (formData.age) params.set('age', formData.age);
+      if (formData.annualSalary) params.set('annualSalary', formData.annualSalary);
 
-      const response = await fetch(`/api/pension-schemes?${params}`);
+      const response = await fetch(`/api/allroutes?${params}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -75,19 +112,46 @@ export default function TestPensionAPI() {
               </div>
 
               <div>
-                <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
-                  Origin *
+                <label htmlFor="countries" className="block text-sm font-medium text-gray-700 mb-2">
+                  Countries *
                 </label>
-                <select
-                  id="origin"
-                  name="origin"
-                  value={formData.origin}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
-                >
-                  <option value="India">India</option>
-                </select>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    id="countries"
+                    aria-haspopup="listbox"
+                    aria-expanded={countriesOpen}
+                    onClick={() => setCountriesOpen((v) => !v)}
+                    className="w-full text-left px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+                  >
+                    {formData.countries && formData.countries.length > 0
+                      ? `${formData.countries[0]}${formData.countries.length > 1 ? ` +${formData.countries.length - 1} more` : ''}`
+                      : 'Select countries'}
+                  </button>
+
+                  {countriesOpen && (
+                    <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-56 overflow-auto">
+                      <ul role="listbox" aria-multiselectable="true" className="py-2">
+                        {COUNTRIES.map((c) => {
+                          const checked = formData.countries?.includes(c);
+                          return (
+                            <li key={c} className="px-3 py-2 hover:bg-gray-50">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4"
+                                  checked={!!checked}
+                                  onChange={() => toggleCountry(c)}
+                                />
+                                <span className="text-sm text-gray-800">{c}</span>
+                              </label>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -131,10 +195,12 @@ export default function TestPensionAPI() {
             <div className="mb-6 p-4 bg-blue-50 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">User Profile:</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-blue-800">
-                <div><strong>Age:</strong> {result.userProfile.age}</div>
-                <div><strong>Origin:</strong> {result.userProfile.origin}</div>
-                <div><strong>Annual Salary:</strong> ₹{result.userProfile.annualSalary.toLocaleString()}</div>
-                <div><strong>Monthly Salary:</strong> ₹{result.userProfile.monthlySalary.toLocaleString()}</div>
+                <div><strong>Age:</strong> {result.userProfile ? result.userProfile.age : '-'}</div>
+                <div className="col-span-1 md:col-span-2"><strong>Countries:</strong> {Array.isArray(result.countries) ? result.countries.join(', ') : '-'}</div>
+                <div><strong>Annual Salary:</strong> {result.userProfile ? `₹${result.userProfile.annualSalary.toLocaleString()}` : '-'}</div>
+                {result.userProfile && (
+                  <div><strong>Monthly Salary:</strong> ₹{result.userProfile.monthlySalary.toLocaleString()}</div>
+                )}
               </div>
             </div>
 
@@ -195,9 +261,11 @@ export default function TestPensionAPI() {
                        <div className="flex justify-between items-start mb-3">
                          <h4 className="text-lg font-semibold text-gray-900">{scheme.scheme_name}</h4>
                          <div className="flex gap-2">
-                           <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
-                             Score: {scheme.relevanceScore}
-                           </span>
+                           {typeof scheme.relevanceScore !== 'undefined' && (
+                             <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                               Score: {scheme.relevanceScore}
+                             </span>
+                           )}
                            {scheme.pensionCalculation && scheme.pensionCalculation.monthlyPension > 0 && (
                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium">
                                ₹{scheme.pensionCalculation.monthlyPension.toLocaleString()}/month

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import pensionSchemesData from '../../../../csvjson (1).json';
+import pensionSchemesData from '../../../../PensionDB.json';
 import { calculatePensionsForSchemes, getPensionInsights } from '@/lib/pensionCalculator';
 
 export async function GET(request) {
