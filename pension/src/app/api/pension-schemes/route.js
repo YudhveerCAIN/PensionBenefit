@@ -6,20 +6,45 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const age = parseInt(searchParams.get('age'));
-    const origin = searchParams.get('origin');
     const annualSalary = parseInt(searchParams.get('annualSalary'));
 
+    // Countries input: support ?countries=India,Japan or repeated ?countries=India&countries=Japan
+    // Also accept a single fallback key: ?country=India
+    let countriesParam = searchParams.getAll('countries');
+    if (countriesParam.length === 0) {
+      const single = searchParams.get('country');
+      if (single) {
+        countriesParam = [single];
+      }
+    }
+
     // Validate required parameters
-    if (!age || !origin || !annualSalary) {
+    if (!age || !annualSalary || countriesParam.length === 0) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Missing required parameters: age, origin, and annualSalary are required',
-          requiredParams: ['age', 'origin', 'annualSalary']
+          message: 'Missing required parameters: age, annualSalary, and countries are required',
+          requiredParams: ['age', 'annualSalary', 'countries']
         },
         { status: 400 }
       );
     }
+
+    // Normalize countries
+    const normalizedCountries = countriesParam
+      .flatMap(entry => String(entry).split(','))
+      .map(s => s.trim())
+      .filter(Boolean);
+    if (normalizedCountries.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No valid country names provided after parsing the "countries" parameter'
+        },
+        { status: 400 }
+      );
+    }
+    const countriesLower = new Set(normalizedCountries.map(c => c.toLowerCase()));
 
     // Validate age
     if (age < 0 || age > 120) {
@@ -27,17 +52,6 @@ export async function GET(request) {
         {
           success: false,
           message: 'Invalid age: Age must be between 0 and 120'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate origin (for now, only India is supported)
-    if (origin.toLowerCase() !== 'india') {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Invalid origin: Only India is currently supported'
         },
         { status: 400 }
       );
@@ -54,8 +68,23 @@ export async function GET(request) {
       );
     }
 
-    // Filter schemes based on eligibility criteria
-    const eligibleSchemes = pensionSchemesData.filter(scheme => {
+    // Filter by selected countries first, then apply eligibility criteria
+    const countryFilteredSchemes = pensionSchemesData.filter(s =>
+      s.country && countriesLower.has(String(s.country).toLowerCase())
+    );
+    if (countryFilteredSchemes.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'No schemes found for the requested countries',
+          requestedCountries: normalizedCountries
+        },
+        { status: 404 }
+      );
+    }
+
+    // Then apply eligibility criteria used previously
+    const eligibleSchemes = countryFilteredSchemes.filter(scheme => {
       // Check age eligibility
       const minAge = scheme.eligibility_age_min;
       const maxAge = scheme.eligibility_age_max;
@@ -184,36 +213,36 @@ export async function GET(request) {
       };
     });
 
-         // Sort by relevance score (highest first)
-     schemesWithRecommendations.sort((a, b) => b.relevanceScore - a.relevanceScore);
- 
-     // Calculate pension amounts for each scheme
-     const schemesWithPensions = calculatePensionsForSchemes(schemesWithRecommendations, {
-       age,
-       annualSalary,
-       monthlySalary: Math.round(annualSalary / 12)
-     });
- 
-     // Get pension insights and recommendations
-     const insights = getPensionInsights(schemesWithPensions, {
-       age,
-       annualSalary
-     });
- 
-     return NextResponse.json({
-       success: true,
-       message: 'Pension schemes retrieved successfully',
-       userProfile: {
-         age,
-         origin,
-         annualSalary,
-         monthlySalary: Math.round(annualSalary / 12)
-       },
-       totalSchemes: schemesWithPensions.length,
-       schemes: schemesWithPensions,
-       pensionInsights: insights,
-       timestamp: new Date().toISOString()
-     });
+    // Sort by relevance score (highest first)
+    schemesWithRecommendations.sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+    // Calculate pension amounts for each scheme
+    const schemesWithPensions = calculatePensionsForSchemes(schemesWithRecommendations, {
+      age,
+      annualSalary,
+      monthlySalary: Math.round(annualSalary / 12)
+    });
+
+    // Get pension insights and recommendations
+    const insights = getPensionInsights(schemesWithPensions, {
+      age,
+      annualSalary
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Pension schemes retrieved successfully',
+      countries: normalizedCountries,
+      userProfile: {
+        age,
+        annualSalary,
+        monthlySalary: Math.round(annualSalary / 12)
+      },
+      totalSchemes: schemesWithPensions.length,
+      schemes: schemesWithPensions,
+      pensionInsights: insights,
+      timestamp: new Date().toISOString()
+    });
 
   } catch (error) {
     console.error('Error fetching pension schemes:', error);
